@@ -14,7 +14,7 @@ import pyperclip
 from ..events import TextChanged, PyperclipError
 
 
-class SingleLineInput(Widget):
+class TextInput(Widget):
     """
     A simple single line text input widget.
     """
@@ -233,7 +233,7 @@ if __name__ == "__main__":
     class MyApp(App):
         async def on_mount(self):
             await self.view.dock(
-                SingleLineInput(
+                TextInput(
                     title="text",
                     title_align="left",
                     placeholder=Text("Enter yo message...", style="dim white"),
