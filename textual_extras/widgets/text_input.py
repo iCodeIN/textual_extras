@@ -14,7 +14,7 @@ import pyperclip
 
 class SingleLineInput(Widget):
     """
-    A simple text input widget.
+    A simple single line text input widget.
     """
 
     value: str = ""
@@ -47,6 +47,10 @@ class SingleLineInput(Widget):
         return self._has_focus
 
     def render(self) -> RenderableType:
+        """
+        Renders a Panel for the Input
+        """
+
         if self.has_focus:
             text = self._render_text_with_cursor()
         else:
@@ -66,8 +70,9 @@ class SingleLineInput(Widget):
 
     def _render_text_with_cursor(self) -> Text:
         """
-        Produces the renderable Text object combining value and cursor
+        Produces renderable Text object combining value and cursor
         """
+
         text = Text()
 
         if self.password:
@@ -87,11 +92,18 @@ class SingleLineInput(Widget):
         self._has_focus = False
 
     def clear(self):
+        """
+        Clear the Input
+        """
         self.value = ""
         self._cursor_position = 0
         self.refresh()
 
     def _insert_text(self, text: str | None = None) -> None:
+        """
+        Inserts text where the cursor is
+        """
+
         try:
             # Will throw an error if `xclip` if not installed on the system
             if text is None:
@@ -107,9 +119,16 @@ class SingleLineInput(Widget):
             pass
 
     async def on_key(self, event: events.Key):
+        """Send the key to the Input"""
         await self.keypress(event.key)
 
     async def _move_cursor_backward(self, word=False, delete=False):
+        """
+        Moves the cursor backwards..
+        Optionally jumps over a word when pressed ctrl+left
+        Optionally deletes the letter in case of backspace
+        """
+
         prev = self._cursor_position
 
         if not word:
@@ -129,6 +148,12 @@ class SingleLineInput(Widget):
             self.value = self.value[: self._cursor_position] + self.value[prev:]
 
     async def _move_cursor_forward(self, word=False, delete=False):
+        """
+        Moves the cursor forward..
+        Optionally jumps over a word when pressed ctrl+right
+        Optionally deletes the letter in case of del or ctrl+del
+        """
+
         prev = self._cursor_position
 
         if not word:
@@ -153,6 +178,9 @@ class SingleLineInput(Widget):
             self._cursor_position = prev  # Because the cursor never actually moved :)
 
     async def keypress(self, key: str) -> None:
+        """
+        Handle Keypresses
+        """
         match key:
 
             # Moving backward
