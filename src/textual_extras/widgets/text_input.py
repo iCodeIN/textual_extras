@@ -11,6 +11,8 @@ from rich.console import RenderableType
 
 import pyperclip
 
+from ..events import TextChanged, PyperclipError
+
 
 class SingleLineInput(Widget):
     """
@@ -104,19 +106,16 @@ class SingleLineInput(Widget):
         Inserts text where the cursor is
         """
 
-        try:
-            # Will throw an error if `xclip` if not installed on the system
-            if text is None:
-                text = pyperclip.paste()
+        # Will throw an error if `xclip` if not installed on the system
+        if text is None:
+            text = pyperclip.paste()
 
-            self.value = (
-                self.value[: self._cursor_position]
-                + text
-                + self.value[self._cursor_position :]
-            )
-            self._cursor_position += len(text)
-        except:
-            pass
+        self.value = (
+            self.value[: self._cursor_position]
+            + text
+            + self.value[self._cursor_position :]
+        )
+        self._cursor_position += len(text)
 
     async def on_key(self, event: events.Key):
         """Send the key to the Input"""
@@ -190,12 +189,10 @@ class SingleLineInput(Widget):
             case "ctrl+left":
                 await self._move_cursor_backward(word=True)
 
-            case "ctrl+h":  # Backspace
+            case "ctrl+h":  # Backspace (No ctrl+backspace for ya T_T)
                 await self._move_cursor_backward(delete=True)
 
-            # No ctrl+backspace :(
-
-            # Moving Forward
+            # Moving forward
             case "right":
                 await self._move_cursor_forward()
 
@@ -217,11 +214,16 @@ class SingleLineInput(Widget):
 
             # COPY-PASTA
             case "ctrl+v":
-                self._insert_text()
+                try:
+                    self._insert_text()
+                except:
+                    await self.emit(PyperclipError(self))
+                    return
 
         if len(key) == 1:
             self._insert_text(key)
 
+        await self.emit(TextChanged(self))
         self.refresh()
 
 
