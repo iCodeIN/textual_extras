@@ -30,7 +30,7 @@ class SingleLineInput(Widget):
         title_align: AlignMethod = "center",
         border_style: StyleType = "blue",
         value: str = "",
-        placeholder: TextType = Text("Speak your mind ..", style="dim white"),
+        placeholder: TextType = Text("Placeholder ...", style="dim white"),
         password: bool = False,
     ) -> None:
         super().__init__(name)
@@ -109,34 +109,85 @@ class SingleLineInput(Widget):
     async def on_key(self, event: events.Key):
         await self.keypress(event.key)
 
+    async def _move_cursor_backward(self, word=False, delete=False):
+        prev = self._cursor_position
+
+        if not word:
+            self._cursor_position = max(self._cursor_position - 1, 0)
+        else:
+            while self._cursor_position:
+                if self.value[self._cursor_position - 1] != " " and (
+                    self._cursor_position == 1
+                    or self.value[self._cursor_position - 2] == " "
+                ):
+                    self._cursor_position -= 1
+                    break
+
+                self._cursor_position -= 1
+
+        if delete:
+            self.value = self.value[: self._cursor_position] + self.value[prev:]
+
+    async def _move_cursor_forward(self, word=False, delete=False):
+        prev = self._cursor_position
+
+        if not word:
+            self._cursor_position = min(self._cursor_position + 1, len(self.value))
+        else:
+
+            while self._cursor_position < len(self.value):
+                if (
+                    self._cursor_position != prev
+                    and self.value[self._cursor_position - 1] == " "
+                    and (
+                        self._cursor_position == len(self.value) - 1
+                        or self.value[self._cursor_position] != " "
+                    )
+                ):
+                    break
+
+                self._cursor_position += 1
+
+        if delete:
+            self.value = self.value[:prev] + self.value[self._cursor_position :]
+            self._cursor_position = prev  # Because the cursor never actually moved :)
+
     async def keypress(self, key: str) -> None:
         match key:
+
+            # Moving backward
             case "left":
-                self._cursor_position = max(self._cursor_position - 1, 0)
+                await self._move_cursor_backward()
 
+            case "ctrl+left":
+                await self._move_cursor_backward(word=True)
+
+            case "ctrl+h":  # Backspace
+                await self._move_cursor_backward(delete=True)
+
+            # No ctrl+backspace :(
+
+            # Moving Forward
             case "right":
-                self._cursor_position = min(self._cursor_position + 1, len(self.value))
+                await self._move_cursor_forward()
 
+            case "ctrl+right":
+                await self._move_cursor_forward(word=True)
+
+            case "delete":
+                await self._move_cursor_forward(delete=True)
+
+            case "ctrl+delete":
+                await self._move_cursor_forward(word=True, delete=True)
+
+            # EXTRAS
             case "home":
                 self._cursor_position = 0
 
             case "end":
                 self._cursor_position = len(self.value)
 
-            case "ctrl+h":  # Backspace
-                if self._cursor_position:
-                    self._cursor_position = max(self._cursor_position - 1, 0)
-                    self.value = (
-                        self.value[: self._cursor_position]
-                        + self.value[self._cursor_position + 1 :]
-                    )
-
-            case "delete":
-                self.value = (
-                    self.value[: self._cursor_position]
-                    + self.value[self._cursor_position + 1 :]
-                )
-
+            # COPY-PASTA
             case "ctrl+v":
                 self._insert_text()
 
