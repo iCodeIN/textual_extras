@@ -26,7 +26,7 @@ class View:
 
 class TextInput(Widget):
     """
-    A simple single line text input widget.
+    A simple single line Text Input widget
     """
 
     value: str = ""
@@ -61,7 +61,7 @@ class TextInput(Widget):
 
     def render(self) -> RenderableType:
         """
-        Renders a Panel for the Input
+        Renders a Panel for the Text Input Box
         """
 
         if not hasattr(self, "view"):
@@ -74,6 +74,13 @@ class TextInput(Widget):
                 text = self.placeholder
             else:
                 text = Text(self.value)
+
+        return self.render_panel(text)
+
+    def render_panel(self, text: TextType) -> RenderableType:
+        """
+        Builds a panel for the Inpux Box
+        """
 
         return Panel(
             text[self.view.start : self.view.end],
@@ -100,6 +107,7 @@ class TextInput(Widget):
             text.append(self.value[: self._cursor_position])
             text.append(self.cursor, style="bold")
             text.append(self.value[self._cursor_position :])
+
         return text
 
     async def on_focus(self, _: events.Focus) -> None:
@@ -108,15 +116,15 @@ class TextInput(Widget):
     async def on_blur(self, _: events.Blur) -> None:
         self._has_focus = False
 
-    def clear(self):
+    def clear(self) -> None:
         """
-        Clear the Input
+        Clears the Input Box
         """
         self.value = ""
         self._cursor_position = 0
         self.refresh()
 
-    def _is_allowed(self, text: str):
+    def _is_allowed(self, text: str) -> bool:
         if self.list[0] == "whitelist":
             for letter in text:
                 if letter not in self.list[1]:
@@ -151,11 +159,11 @@ class TextInput(Widget):
 
         self._cursor_position += len(text)
 
-    async def on_key(self, event: events.Key):
+    async def on_key(self, event: events.Key) -> None:
         """Send the key to the Input"""
         await self.keypress(event.key)
 
-    async def _move_cursor_backward(self, word=False, delete=False):
+    async def _move_cursor_backward(self, word=False, delete=False) -> None:
         """
         Moves the cursor backwards..
         Optionally jumps over a word when pressed ctrl+left
@@ -180,7 +188,7 @@ class TextInput(Widget):
         if delete:
             self.value = self.value[: self._cursor_position] + self.value[prev:]
 
-    async def _move_cursor_forward(self, word=False, delete=False):
+    async def _move_cursor_forward(self, word=False, delete=False) -> None:
         """
         Moves the cursor forward..
         Optionally jumps over a word when pressed ctrl+right
@@ -210,7 +218,11 @@ class TextInput(Widget):
             self.value = self.value[:prev] + self.value[self._cursor_position :]
             self._cursor_position = prev  # Because the cursor never actually moved :)
 
-    def update_view(self, prev: int, curr: int):
+    def update_view(self, prev: int, curr: int) -> None:
+        """
+        Updates the current view-able part of the text if there is an overflow
+        """
+
         if prev >= self.view.start and curr < self.view.start:
             self.view.start = curr
 
@@ -221,7 +233,7 @@ class TextInput(Widget):
 
     async def keypress(self, key: str) -> None:
         """
-        Handle Keypresses
+        Handles Keypresses
         """
         prev = self._cursor_position
 
