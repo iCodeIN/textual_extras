@@ -1,3 +1,4 @@
+from typing import Literal
 from rich.box import SQUARE
 from rich.align import AlignMethod
 from rich.panel import Panel
@@ -11,7 +12,7 @@ from rich.console import RenderableType
 
 import pyperclip
 
-from ..events import TextChanged, PyperclipError
+from ..events import TextChanged, PyperclipError, InvalidInputAttempt
 
 
 class View:
@@ -40,19 +41,19 @@ class TextInput(Widget):
         title: TextType = "",
         title_align: AlignMethod = "center",
         border_style: StyleType = "blue",
-        value: str = "",
         placeholder: TextType = Text("Placeholder ...", style="dim white"),
         password: bool = False,
+        list: tuple[Literal["blacklist", "whitelist"], list[str]] = ("blacklist", []),
     ) -> None:
         super().__init__(name)
-        self.value = value
         self.title = title
         self.title_align: AlignMethod = title_align  # Silence compiler warning
         self.border_style: StyleType = border_style
         self.placeholder = placeholder
         self.password = password
+        self.list = list
+
         self._cursor_position = len(self.value)
-        self.view = View(-1, -1)
 
     @property
     def has_focus(self) -> bool:
@@ -62,7 +63,8 @@ class TextInput(Widget):
         """
         Renders a Panel for the Input
         """
-        if self.view.start == -1:
+
+        if not hasattr(self, "view"):
             self.view = View(0, self.size.width - 4)
 
         if self.has_focus:
@@ -114,7 +116,19 @@ class TextInput(Widget):
         self._cursor_position = 0
         self.refresh()
 
-    def _insert_text(self, text: str | None = None) -> None:
+    def _is_allowed(self, text: str):
+        if self.list[0] == "whitelist":
+            for letter in text:
+                if letter not in self.list[1]:
+                    return False
+        else:
+            for letter in text:
+                if letter in self.list[1]:
+                    return False
+
+        return True
+
+    async def _insert_text(self, text: str | None = None) -> None:
         """
         Inserts text where the cursor is
         """
@@ -124,6 +138,10 @@ class TextInput(Widget):
 
         if text is None:
             text = pyperclip.paste()
+
+        if not self._is_allowed(text):
+            await self.emit(InvalidInputAttempt(self))
+            return
 
         self.value = (
             self.value[: self._cursor_position]
@@ -242,13 +260,13 @@ class TextInput(Widget):
             # COPY-PASTA
             case "ctrl+v":
                 try:
-                    self._insert_text()
+                    await self._insert_text()
                 except:
                     await self.emit(PyperclipError(self))
                     return
 
         if len(key) == 1:
-            self._insert_text(key)
+            await self._insert_text(key)
 
         self.update_view(prev, self._cursor_position)
         await self.emit(TextChanged(self))
