@@ -7,3 +7,7 @@ class TextChanged(Event):
 
 class PyperclipError(Event):
     pass
+
+
+class InvalidInputAttempt(Event):
+    pass

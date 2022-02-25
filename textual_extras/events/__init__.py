@@ -1,1 +1,1 @@
-from .events import TextChanged, PyperclipError
+from .events import TextChanged, PyperclipError, InvalidInputAttempt
