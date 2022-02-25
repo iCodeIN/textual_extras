@@ -1,4 +1,4 @@
-from rich.box import SQUARE, DOUBLE
+from rich.box import SQUARE
 from rich.align import AlignMethod
 from rich.panel import Panel
 from rich.style import StyleType
@@ -43,6 +43,7 @@ class TextInput(Widget):
         self.placeholder = placeholder
         self.password = password
         self._cursor_position = len(self.value)
+        self.width = -1
 
     @property
     def has_focus(self) -> bool:
@@ -66,8 +67,9 @@ class TextInput(Widget):
             title=self.title,
             title_align=self.title_align,
             height=3,
-            border_style=self.border_style,
-            box=DOUBLE if self.has_focus else SQUARE,
+            border_style=("bold " if self.has_focus else "dim ")
+            + str(self.border_style),
+            box=SQUARE,
         )
 
     def _render_text_with_cursor(self) -> Text:
