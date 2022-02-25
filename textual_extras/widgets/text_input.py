@@ -197,7 +197,7 @@ class TextInput(Widget):
             self.view.start = curr
 
         elif prev <= self.view.end and curr >= self.view.end:
-            self.view.start = max(0, curr - self.size.width + 4)
+            self.view.start = max(0, curr - self.size.width + 5)
 
         self.view.end = self.view.start + self.size.width - 4
 
