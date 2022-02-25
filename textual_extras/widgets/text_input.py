@@ -14,6 +14,15 @@ import pyperclip
 from ..events import TextChanged, PyperclipError
 
 
+class View:
+    def __init__(self, start: int = 0, end: int = 0) -> None:
+        self.start = start
+        self.end = end
+
+    def __str__(self):
+        return f"View({self.start}, {self.end})"
+
+
 class TextInput(Widget):
     """
     A simple single line text input widget.
@@ -43,7 +52,7 @@ class TextInput(Widget):
         self.placeholder = placeholder
         self.password = password
         self._cursor_position = len(self.value)
-        self.width = -1
+        self.view = View(-1, -1)
 
     @property
     def has_focus(self) -> bool:
@@ -53,6 +62,8 @@ class TextInput(Widget):
         """
         Renders a Panel for the Input
         """
+        if self.view.start == -1:
+            self.view = View(0, self.size.width - 4)
 
         if self.has_focus:
             text = self._render_text_with_cursor()
@@ -63,7 +74,7 @@ class TextInput(Widget):
                 text = Text(self.value)
 
         return Panel(
-            text,
+            text[self.view.start : self.view.end],
             title=self.title,
             title_align=self.title_align,
             height=3,
@@ -108,7 +119,9 @@ class TextInput(Widget):
         Inserts text where the cursor is
         """
 
-        # Will throw an error if `xclip` if not installed on the system
+        # Will throw an error if `xclip` if not installed on the linux(Xorg) system,
+        # should work just fine on windows and mac
+
         if text is None:
             text = pyperclip.paste()
 
@@ -117,6 +130,7 @@ class TextInput(Widget):
             + text
             + self.value[self._cursor_position :]
         )
+
         self._cursor_position += len(text)
 
     async def on_key(self, event: events.Key):
@@ -178,10 +192,21 @@ class TextInput(Widget):
             self.value = self.value[:prev] + self.value[self._cursor_position :]
             self._cursor_position = prev  # Because the cursor never actually moved :)
 
+    def update_view(self, prev: int, curr: int):
+        if prev >= self.view.start and curr < self.view.start:
+            self.view.start = curr
+
+        elif prev <= self.view.end and curr >= self.view.end:
+            self.view.start = max(0, curr - self.size.width + 4)
+
+        self.view.end = self.view.start + self.size.width - 4
+
     async def keypress(self, key: str) -> None:
         """
         Handle Keypresses
         """
+        prev = self._cursor_position
+
         match key:
 
             # Moving backward
@@ -225,21 +250,6 @@ class TextInput(Widget):
         if len(key) == 1:
             self._insert_text(key)
 
+        self.update_view(prev, self._cursor_position)
         await self.emit(TextChanged(self))
         self.refresh()
-
-
-if __name__ == "__main__":
-    from textual.app import App
-
-    class MyApp(App):
-        async def on_mount(self):
-            await self.view.dock(
-                TextInput(
-                    title="text",
-                    title_align="left",
-                    placeholder=Text("Enter yo message...", style="dim white"),
-                )
-            )
-
-    MyApp.run()
