@@ -15,11 +15,25 @@ there were so many things i wanted to modify... so I created my own little libra
 > ⚠️ ***NOTE:*** Textual is going under rapid development and some things, at some point of time, might break.. \
 > so PRs are more than welcome :)
 
+# Installation
+
+## One Liner
+```bash
+python -m pip install git+https://github.com/kraanzu/textual-extras.git
+```
+
+## Or if you prefer Manual Installation
+``` bash
+git clone https://github.com/kraanzu/textual-extras.git
+cd termtyper
+pip install .
+```
+
 
 ## 💡 Widget Ideas:
 
 <details>
-  <summary> ✔️ Text Input </summary>
+  <summary> ✔️ <b>Text Input</b> </summary>
   
   ### A Simple, Single Line Text Input Box
   ------------------
@@ -35,16 +49,69 @@ there were so many things i wanted to modify... so I created my own little libra
   
   ------------------
   ### Controls
-  - home => Moves cursor to the start of the text
-  - end => Moves cursor to the end of the text
-  - left/right arrow => Moves cursor by one position in the specified direction
-  - ctrl + left/right => Moves cursor to the next space in the specified direction
-  - backspace/delete => Delete one letter in the specified direction
-  - ctrl + del => Delte a whole word to the right (Space serves as the delimiter)
-  - ctrl + v => Paste the content from your system clipboard 
+  - **home** => Moves cursor to the start of the text
+  - **end** => Moves cursor to the end of the text
+  - **left/right arrow** => Moves cursor by one position in the specified direction
+  - **ctrl + left/right** => Moves cursor to the next space in the specified direction
+  - **backspace/delete** => Delete one letter in the specified direction
+  - **ctrl + del** => Delte a whole word to the right (Space serves as the delimiter)
+  - **ctrl + v** => Paste the content from your system clipboard 
   
   > ⚠️ ***NOTE:*** There is no implementation for ctrl+backspace as backspace is represented as ctrl+h in textual and ctrl+ctrl+h, is unfortunately, not a thing :(
  
   > ⚠️ ***NOTE:*** ctrl+v should work just fine on windows and mac.. On linux if you are on X11 system.. consider adding `xclip` for this feature
+  **On Ubuntu :** sudo apt install xclip \
+  **On ArchLinux :** well you should know it already if you use Arch.. I use Arch btw :) 
   
 </details>
+
+<details>
+  <summary> ✔️ <b>Number Input</b> </summary>
+  
+  ### A Simple, Single Line Number Input Box.. 
+  ------------------
+  ### Features: 
+  - Same as Text Input
+
+</details> 
+
+<details>
+  <summary> ⚠️(WIP) <b>Mutli-Line Input</b> </summary>
+  
+  ### A Simple, Mutli Line Code Input Box with syntax highlighting.. 
+  ------------------
+  ### Features: 
+  - TODO
+
+</details> 
+
+<details>
+  <summary> ⚠️(WIP) <b>Syntax Box</b> </summary>
+  
+  ### A Simple, Mutli Line Number Input Box.. 
+  ------------------
+  ### Features: 
+  - TODO
+
+</details> 
+
+
+<details>
+  <summary> ⚠️(WIP) <b>List</b> </summary>
+  
+  ### A List View to show, add, delete and modify items.. 
+  ------------------
+  ### Features: 
+  - TODO
+
+</details> 
+
+<details>
+  <summary> ⚠️(WIP) <b>Searchable List</b> </summary>
+  
+  ### A List with a bar to search for items in the list.. 
+  ------------------
+  ### Features: 
+  - TODO
+
+</details> 
