@@ -20,6 +20,16 @@ class View:
         self.start = start
         self.end = end
 
+    def shift_left(self, delta: int):
+        delta = min(delta, self.start)
+        self.start -= delta
+        self.end -= delta
+
+    def shift_right(self, delta: int, length: int):
+        delta = min(delta, length - self.end)
+        self.start += delta
+        self.end += delta
+
     def __str__(self):
         return f"View({self.start}, {self.end})"
 
@@ -36,7 +46,6 @@ class TextInput(Widget):
 
     def __init__(
         self,
-        *,
         name: str | None = None,
         title: TextType = "",
         title_align: AlignMethod = "center",
@@ -224,12 +233,10 @@ class TextInput(Widget):
         """
 
         if prev >= self.view.start and curr < self.view.start:
-            self.view.start = curr
+            self.view.shift_left(prev - curr)
 
         elif prev <= self.view.end and curr >= self.view.end:
-            self.view.start = max(0, curr - self.size.width + 5)
-
-        self.view.end = self.view.start + self.size.width - 4
+            self.view.shift_right(curr - prev, len(self.value) + 1)
 
     async def keypress(self, key: str) -> None:
         """
