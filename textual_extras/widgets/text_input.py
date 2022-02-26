@@ -170,7 +170,12 @@ class TextInput(Widget):
 
     async def on_key(self, event: events.Key) -> None:
         """Send the key to the Input"""
-        await self.keypress(event.key)
+        prev = self._cursor_position
+
+        await self.handle_keypress(event.key)
+        self.update_view(prev, self._cursor_position)
+        await self.emit(TextChanged(self))
+        self.refresh()
 
     async def _move_cursor_backward(self, word=False, delete=False) -> None:
         """
@@ -238,12 +243,10 @@ class TextInput(Widget):
         elif prev <= self.view.end and curr >= self.view.end:
             self.view.shift_right(curr - prev, len(self.value) + 1)
 
-    async def keypress(self, key: str) -> None:
+    async def handle_keypress(self, key: str) -> None:
         """
         Handles Keypresses
         """
-        prev = self._cursor_position
-
         match key:
 
             # Moving backward
@@ -286,7 +289,3 @@ class TextInput(Widget):
 
         if len(key) == 1:
             await self._insert_text(key)
-
-        self.update_view(prev, self._cursor_position)
-        await self.emit(TextChanged(self))
-        self.refresh()
