@@ -33,10 +33,10 @@ pip install .
 
 <details>
   <summary> ✔️ <b>Text Input</b> </summary>
-  
+
   ### A Simple, Single Line Text Input Box
   ------------------
-  ### Features: 
+  ### Features:
   - [x] Have shortcuts for smooth travelling in the input area (see at the end of the section for more details)
   - [x] Support for placeholders and title customization
   - [x] Support for password protected texts
@@ -46,7 +46,7 @@ pip install .
   - [ ] Inline Syntax highlighing
   - [ ] Inline passwords
   - [ ] Simultaneous update of rich markup
-  
+
   ------------------
   ### Controls
   - **home** => Moves cursor to the start of the text
@@ -55,26 +55,16 @@ pip install .
   - **ctrl + left/right** => Moves cursor to the next space in the specified direction
   - **backspace/delete** => Delete one letter in the specified direction
   - **ctrl + del** => Delte a whole word to the right (Space serves as the delimiter)
-  - **ctrl + v** => Paste the content from your system clipboard 
-  
+  - **ctrl + v** => Paste the content from your system clipboard
+
 </details>
 
 <details>
-  <summary> ✔️ <b>Number Input</b> </summary>
-  
-  ### A Simple, Single Line Number Input Box.. 
-  ------------------
-  ### Features: 
-  - Same as Text Input but it only allows numerical values as arguments
-
-</details> 
-
-<details>
   <summary> ✔️ <b>Multi-Line Text Input</b> </summary>
-  
-  ### A Simple, Multi Line Text Input Box.. 
+
+  ### A Simple, Multi Line Text Input Box..
   ------------------
-  ### Features: 
+  ### Features:
   - [x] Have shortcuts for smooth travelling in the input area (see at the end of the section for more details)
   - [x] Support for placeholders and title customization
   - [x] Support for password protected texts
@@ -96,40 +86,40 @@ pip install .
   - **up/down arrow** => Moves up or down at the same cursor position in the specified direction
   - **backspace/delete** => Delete one letter in the specified direction
   - **ctrl + del** => Delte a whole word to the right (Space serves as the delimiter)
-  - **ctrl + v** => Paste the content from your system clipboard 
-  
-</details> 
+  - **ctrl + v** => Paste the content from your system clipboard
+
+</details>
 
 <details>
   <summary> ⚠️(WIP) <b>Syntax Box</b> </summary>
-  
-  ### A Simple, Mutli Line Code Input Box with syntax highlighting.. 
+
+  ### A Simple, Mutli Line Code Input Box with syntax highlighting..
   ------------------
-  ### Features: 
+  ### Features:
   - TODO
 
-</details> 
+</details>
 
 
 <details>
   <summary> ⚠️(WIP) <b>List</b> </summary>
-  
-  ### A List View to show, add, delete and modify items.. 
+
+  ### A List View to show, add, delete and modify items..
   ------------------
-  ### Features: 
+  ### Features:
   - TODO
 
-</details> 
+</details>
 
 <details>
   <summary> ⚠️(WIP) <b>Searchable List</b> </summary>
-  
-  ### A List with a bar to search for items in the list.. 
+
+  ### A List with a bar to search for items in the list..
   ------------------
-  ### Features: 
+  ### Features:
   - TODO
 
-</details> 
+</details>
 
 ------------------
 
