@@ -26,11 +26,13 @@ class MultiLineTextInput(TextInput):
         password: bool = False,
         list: tuple[Literal["blacklist", "whitelist"], list[str]] = ("blacklist", []),
         max_lines: int | None = None,
+        fixed: bool = False,
     ) -> None:
         super().__init__(
             name, title, title_align, border_style, placeholder, password, list
         )
         self.max_lines = max_lines
+        self.fixed = fixed
 
     def _set_view(self):
         """
@@ -73,9 +75,12 @@ class MultiLineTextInput(TextInput):
         Builds a panel for the input box
         """
 
-        height = 1 + ((len(self.value) - self.view.start) or 1) // (self.size.width - 4)
+        if not self.fixed:
+            height = 1 + ((len(self.value) - self.view.start) or 1) // (self.size.width - 4)
+            # SAFETY: self.max_lines will never be `None` because...
+            # it is called from within the `render` method which updates the variable, if None, to the widget height
+            height = min(height, self.max_lines)
+        else:
+            height = self.max_lines
 
-        # SAFETY: self.max_lines will never be `None` because...
-        # it is called from within the `render` method which updates the variable, if None, to the widget height
-        height = min(height, self.max_lines)
         return super().render_panel(text, height)
