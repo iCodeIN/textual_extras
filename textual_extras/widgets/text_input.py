@@ -63,17 +63,27 @@ class TextInput(Widget):
         self.list = list
 
         self._cursor_position = len(self.value)
+        self.width = self.size.width - 4
 
     @property
     def has_focus(self) -> bool:
         return self._has_focus
 
+    async def on_resize(self, _: events.Resize) -> None:
+        self._set_view()
+        self.update_view(self._cursor_position, 0)
+        self._cursor_position = 0
+        self.refresh()
+
     def _format_text(self, text: str) -> str:
-        """ """
+        """
+        Trims the non-visible part of the widget
+        """
         return text[self.view.start : self.view.end]
 
     def _set_view(self):
-        self.view = View(0, self.size.width - 4)
+        self.width = self.size.width - 4
+        self.view = View(0, self.width)
 
     def render(self) -> RenderableType:
         """
