@@ -121,6 +121,24 @@ pip install .
 
 </details>
 
+<details>
+  <summary> ⚠️(WIP) <b>Notification</b> </summary>
+
+  ### A notification with a timeout animation
+  ------------------
+  ### Features:
+  - TODO
+
+</details>
+
+------------------
+
+## Emits
+
+**TextChanged** => Emitted when the text in the input area is changed \
+**PyperclipError** =>  Emitted when there is a problem when pasting text from system clipboard (see [Some caveats](#some-caveats)) \
+**InvalidInputAttempt** => Emitted when there is an attempt to input a letter ***which is in blacklist or not in the whitelist***
+
 ------------------
 
 ## Some caveats
