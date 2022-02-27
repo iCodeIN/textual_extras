@@ -25,8 +25,8 @@ class View:
         self.start -= delta
         self.end -= delta
 
-    def shift_right(self, delta: int, length: int):
-        delta = min(delta, length - self.end)
+    def shift_right(self, delta: int, max_val: int):
+        delta = min(delta, max_val - self.end)
         self.start += delta
         self.end += delta
 
@@ -68,54 +68,62 @@ class TextInput(Widget):
     def has_focus(self) -> bool:
         return self._has_focus
 
+    def _format_text(self, text: str) -> str:
+        """ """
+        return text[self.view.start : self.view.end]
+
+    def _set_view(self):
+        self.view = View(0, self.size.width - 4)
+
     def render(self) -> RenderableType:
         """
         Renders a Panel for the Text Input Box
         """
 
         if not hasattr(self, "view"):
-            self.view = View(0, self.size.width - 4)
+            self._set_view()
 
         if self.has_focus:
             text = self._render_text_with_cursor()
         else:
             if len(self.value) == 0:
-                text = self.placeholder
+                return self.render_panel(self.placeholder)
             else:
-                text = Text(self.value)
+                text = self.value
 
-        return self.render_panel(text)
+        formatted_text = self._format_text(text)
+        return self.render_panel(formatted_text)
 
-    def render_panel(self, text: TextType) -> RenderableType:
+    def render_panel(self, text: TextType, height=1) -> RenderableType:
         """
         Builds a panel for the Inpux Box
         """
 
         return Panel(
-            text[self.view.start : self.view.end],
+            text,
             title=self.title,
             title_align=self.title_align,
-            height=3,
+            height=2 + height,
             border_style=("bold " if self.has_focus else "dim ")
             + str(self.border_style),
             box=SQUARE,
         )
 
-    def _render_text_with_cursor(self) -> Text:
+    def _render_text_with_cursor(self) -> str:
         """
         Produces renderable Text object combining value and cursor
         """
 
-        text = Text()
+        text = ""
 
         if self.password:
-            text.append("•" * self._cursor_position)
-            text.append(self.cursor, style="bold")
-            text.append("•" * (len(self.value) - self._cursor_position))
+            text += "•" * self._cursor_position
+            text += self.cursor
+            text += "•" * (len(self.value) - self._cursor_position)
         else:
-            text.append(self.value[: self._cursor_position])
-            text.append(self.cursor, style="bold")
-            text.append(self.value[self._cursor_position :])
+            text += self.value[: self._cursor_position]
+            text += self.cursor
+            text += self.value[self._cursor_position :]
 
         return text
 
