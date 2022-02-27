@@ -42,6 +42,7 @@ pip install .
   - [x] Support for password protected texts
   - [x] Movable view with respect to the cursor
   - [x] Fully responsive
+  - [x] Blacklisting and whitelisting of letters
   - [ ] Inline Syntax highlighing
   - [ ] Inline passwords
   - [ ] Simultaneous update of rich markup
@@ -79,6 +80,7 @@ pip install .
   - [x] Support for password protected texts
   - [x] Movable view with respect to the cursor
   - [x] Both fixed and auto-change mode available for height
+  - [x] Blacklisting and whitelisting of letters
   - [x] Fully responsive
   - [ ] Inline Syntax highlighing
   - [ ] Inline passwords
@@ -137,4 +139,4 @@ pip install .
 
 > ⚠️ ***NOTE:*** **ctrl+v** should work just fine on windows and mac.. On linux if you are on X11 system.. consider adding `xclip` for this feature \
 **On Ubuntu :** sudo apt install xclip \
-  **On ArchLinux :** well you should know it already if you use Arch.. I use Arch btw :)
+**On ArchLinux :** well you should know it already if you use Arch.. I use Arch btw :)
