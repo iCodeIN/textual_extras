@@ -60,7 +60,7 @@ pip install .
 </details>
 
 <details>
-  <summary> ✔️ <b>Multi-Line Text Input</b> </summary>
+  <summary> ⚠️(WIP) <b>Multi-Line Text Input</b> </summary>
 
   ### A Simple, Multi Line Text Input Box..
   ------------------
@@ -91,7 +91,7 @@ pip install .
 </details>
 
 <details>
-  <summary> ⚠️(WIP) <b>Syntax Box</b> </summary>
+  <summary> 🚫(TODO) <b>Syntax Box</b> </summary>
 
   ### A Simple, Mutli Line Code Input Box with syntax highlighting..
   ------------------
@@ -102,7 +102,7 @@ pip install .
 
 
 <details>
-  <summary> ⚠️(WIP) <b>List</b> </summary>
+  <summary> 🚫(TODO) <b>List</b> </summary>
 
   ### A List View to show, add, delete and modify items..
   ------------------
@@ -112,7 +112,7 @@ pip install .
 </details>
 
 <details>
-  <summary> ⚠️(WIP) <b>Searchable List</b> </summary>
+  <summary> 🚫(TODO) <b>Searchable List</b> </summary>
 
   ### A List with a bar to search for items in the list..
   ------------------
@@ -122,7 +122,7 @@ pip install .
 </details>
 
 <details>
-  <summary> ⚠️(WIP) <b>Notification</b> </summary>
+  <summary> 🚫(TODO) <b>Notification</b> </summary>
 
   ### A notification with a timeout animation
   ------------------
