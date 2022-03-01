@@ -87,7 +87,10 @@ pip install .
   - **backspace/delete** => Delete one letter in the specified direction
   - **ctrl + del** => Delte a whole word to the right (Space serves as the delimiter)
   - **ctrl + v** => Paste the content from your system clipboard
-
+  --------------------
+  ### TODO
+  - [ ] Implenent proper handling for newline character, currently it only provides writing without "\n" 
+  
 </details>
 
 <details>
