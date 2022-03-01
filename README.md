@@ -1,4 +1,4 @@
-# Textual-Extras
+# Textual_Extras
 
 
 This is a hobby projects where I am building some usable widgets that could come in handy \
@@ -18,12 +18,12 @@ there were so many things i wanted to modify... so I created my own little libra
 
 ## One Liner
 ```bash
-python -m pip install git+https://github.com/kraanzu/textual-extras.git
+python -m pip install git+https://github.com/kraanzu/textual_extras.git
 ```
 
 ## Or if you prefer Manual Installation
 ``` bash
-git clone https://github.com/kraanzu/textual-extras.git
+git clone https://github.com/kraanzu/textual_extras.git
 cd termtyper
 pip install .
 ```
