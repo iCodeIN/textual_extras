@@ -277,6 +277,9 @@ class TextInput(Widget):
             case "ctrl+h":  # Backspace (No ctrl+backspace for ya T_T)
                 await self._move_cursor_backward(delete=True)
 
+            case "ctrl+w":
+                await self._move_cursor_backward(word=True, delete=True)
+
             # Moving forward
             case "right":
                 await self._move_cursor_forward()
