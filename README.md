@@ -54,6 +54,7 @@ pip install .
   - **left/right arrow** => Moves cursor by one position in the specified direction
   - **ctrl + left/right** => Moves cursor to the next space in the specified direction
   - **backspace/delete** => Delete one letter in the specified direction
+  - **ctrl + w** => Delte a whole word to the left (Space serves as the delimiter)
   - **ctrl + del** => Delte a whole word to the right (Space serves as the delimiter)
   - **ctrl + v** => Paste the content from your system clipboard
 
@@ -145,8 +146,6 @@ pip install .
 ------------------
 
 ## Some caveats
-
-> ⚠️ ***NOTE:*** There is no implementation for ctrl+backspace as backspace is represented as ctrl+h in textual and ctrl+ctrl+h, is unfortunately, not a thing :(
 
 > ⚠️ ***NOTE:*** **ctrl+v** should work just fine on windows and mac.. On linux if you are on X11 system.. consider adding `xclip` for this feature \
 **On Ubuntu :** sudo apt install xclip \
