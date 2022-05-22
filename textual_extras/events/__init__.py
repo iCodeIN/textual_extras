@@ -1,8 +1,8 @@
-from .events import TextChanged, PyperclipError, InvalidInputAttempt, ItemSelected
+from .events import TextChanged, PyperclipError, InvalidInputAttempt, ListItemSelected
 
 __all__ = [
     "TextChanged",
     "PyperclipError",
     "InvalidInputAttempt",
-    "ItemSelected",
+    "ListItemSelected",
 ]
