@@ -1,6 +1,6 @@
 from rich.console import RenderableType
 from rich.panel import Panel
-from rich.text import Span, TextType, Text
+from rich.text import TextType, Text
 from rich.style import StyleType
 from textual.widget import Widget
 from textual import events
@@ -10,7 +10,7 @@ from ..events import ListItemSelected
 
 class List(Widget):
     """
-    A simple list class to show the items in a list (No Mouse Support: Consider List2)
+    A simple list class to show the items in a list
     """
 
     def __init__(
@@ -32,18 +32,9 @@ class List(Widget):
         self.rotate = rotate
         self.selected = 0
 
-    def render_panel(self, renderable: Text) -> RenderableType:
-        """
-        Renders the list with specified panel
-        """
-        width = self.size.width - 2
-        start = self.selected * width
-        end = start + width
-
-        renderable.spans.append(Span(start, end, self.highlighted_option_style))
-        self.panel.renderable = renderable
-
-        return self.panel
+    def select(self, id: int) -> None:
+        self.selected = id
+        self.refresh(layout=True)
 
     def move_cursor_down(self) -> None:
         """
@@ -51,11 +42,9 @@ class List(Widget):
         """
 
         if self.rotate:
-            self.selected = (self.selected + 1) % len(self.options)
+            self.select((self.selected + 1) % len(self.options))
         else:
-            self.selected = min(self.selected + 1, len(self.options) - 1)
-
-        self.refresh()
+            self.select(min(self.selected + 1, len(self.options) - 1))
 
     def move_cursor_up(self):
         """
@@ -63,27 +52,22 @@ class List(Widget):
         """
 
         if self.rotate:
-            self.selected = (self.selected - 1 + len(self.options)) % len(self.options)
+            self.select((self.selected - 1 + len(self.options)) % len(self.options))
         else:
-            self.selected = max(self.selected - 1, 0)
-
-        self.refresh()
+            self.select(max(self.selected - 1, 0))
 
     def move_cursor_to_top(self) -> None:
         """
         Moves the cursor to the top
         """
-
-        self.selected = 0
-        self.refresh()
+        self.select(0)
 
     def move_cursor_to_bottom(self) -> None:
         """
         Moves the cursor to the bottom
         """
 
-        self.selected = len(self.options) - 1
-        self.refresh()
+        self.select(len(self.options) - 1)
 
     async def on_key(self, event: events.Key) -> None:
         event.stop()
@@ -100,22 +84,43 @@ class List(Widget):
             case "enter":
                 await self.emit(ListItemSelected(self, self.options[self.selected]))
 
+    # async def on_mouse_move(self, event: events.MouseMove) -> None:
+    #     item = event.style.meta.get("selected")
+    #     if item:
+    #         self.select(item)
+    #     elif self.selected == 1:
+    #         self.select(0)
+
     def render(self) -> RenderableType:
         width = self.size.width - 3
         renderable = Text()
+        renderable.apply_meta({})
 
         for index, option in enumerate(self.options):
             if isinstance(option, str):
                 option = Text(option)
 
             option.pad_right(width - len(option) - 1)
-            option = Text(" ") + option
+            option = Text(f" ") + option
             option = option[:width]
 
             if index != self.selected:
                 option.stylize(self.other_option_style)
+            else:
+                option.stylize(self.highlighted_option_style)
 
-            renderable.append("\n")
+            meta = {
+                "@click": f"click_label({index})",
+                "selected": index,
+            }
+            option.apply_meta(meta)
+
             renderable.append(option)
+            renderable.append("\n")
 
-        return self.render_panel(renderable)
+        self.panel.renderable = renderable
+        return self.panel
+
+    async def action_click_label(self, id):
+        self.select(id)
+        await self.emit(ListItemSelected(self, self.options[self.selected]))
