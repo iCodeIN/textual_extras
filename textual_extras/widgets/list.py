@@ -85,11 +85,15 @@ class List(Widget):
                 await self.emit(ListItemSelected(self, self.options[self.selected]))
 
     # async def on_mouse_move(self, event: events.MouseMove) -> None:
-    #     item = event.style.meta.get("selected")
-    #     if item:
-    #         self.select(item)
-    #     elif self.selected == 1:
-    #         self.select(0)
+    #     """
+    #     Move the highlight along with mouse hover
+    #     """
+    #     # Err : Cant hover the first item
+    #     self.select(event.style.meta.get("selected"))
+
+    def add_option(self, option: TextType) -> None:
+        self.options.append(option)
+        self.refresh()
 
     def render(self) -> RenderableType:
         width = self.size.width - 3
