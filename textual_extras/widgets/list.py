@@ -1,4 +1,5 @@
 from rich.console import RenderableType
+from rich.tree import Tree
 from rich.panel import Panel
 from rich.text import TextType, Text
 from rich.style import StyleType
@@ -21,6 +22,7 @@ class List(Widget):
         highlighted_option_style: StyleType = "bold green",
         pad: bool = True,
         rotate: bool = False,
+        wrap: bool = True,
         panel: Panel = Panel(""),
     ) -> None:
         super().__init__(name)
@@ -30,6 +32,7 @@ class List(Widget):
         self.pad = pad
         self.panel = panel
         self.rotate = rotate
+        self.wrap = wrap
         self.selected = 0
 
     def select(self, id: int) -> None:
@@ -84,21 +87,24 @@ class List(Widget):
             case "enter":
                 await self.emit(ListItemSelected(self, self.options[self.selected]))
 
-    # async def on_mouse_move(self, event: events.MouseMove) -> None:
-    #     """
-    #     Move the highlight along with mouse hover
-    #     """
-    #     # Err : Cant hover the first item
-    #     self.select(event.style.meta.get("selected"))
+    async def on_mouse_move(self, event: events.MouseMove) -> None:
+        """
+        Move the highlight along with mouse hover
+        """
+        self.select(event.style.meta.get("selected"))
 
     def add_option(self, option: TextType) -> None:
         self.options.append(option)
         self.refresh()
 
     def render(self) -> RenderableType:
-        width = self.size.width - 3
-        renderable = Text()
-        renderable.apply_meta({})
+
+        # 1 borders + 1 space padding on each side
+        width = self.size.width - 4
+
+        tree = Tree("")
+        tree.hide_root = True
+        tree.expanded = True
 
         for index, option in enumerate(self.options):
             if isinstance(option, str):
@@ -106,7 +112,9 @@ class List(Widget):
 
             option.pad_right(width - len(option) - 1)
             option = Text(f" ") + option
-            option = option[:width]
+
+            if self.wrap:
+                option.plain = option.plain[:width]
 
             if index != self.selected:
                 option.stylize(self.other_option_style)
@@ -118,11 +126,9 @@ class List(Widget):
                 "selected": index,
             }
             option.apply_meta(meta)
+            tree.add(option)
 
-            renderable.append(option)
-            renderable.append("\n")
-
-        self.panel.renderable = renderable
+        self.panel.renderable = tree
         return self.panel
 
     async def action_click_label(self, id):
