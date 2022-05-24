@@ -3,14 +3,18 @@ from rich.panel import Panel
 from rich.style import StyleType
 from rich.text import Text, TextType
 from rich.tree import Tree
-from textual import events
 from textual.widget import Widget
 
 from . import TextInput
-from ..events import ListItemSelected
 
 
 class SimpleInput(TextInput):
+    def __init__(
+        self,
+        name: str | None = None,
+    ) -> None:
+        super().__init__(name, placeholder="", box=None)
+
     def _format_text(self, text: str) -> str:
         # why? there is no width to determine the view
         return text
@@ -19,7 +23,7 @@ class SimpleInput(TextInput):
         return text
 
 
-class ListEdit(Widget):
+class SingleLevelTreeEdit(Widget):
     def __init__(
         self,
         name: str | None = None,
@@ -47,7 +51,7 @@ class ListEdit(Widget):
     def pre_setup_options(self, options: list[TextType]):
         self.options: list[SimpleInput] = []
         for option in options:
-            a = SimpleInput(box=None)
+            a = SimpleInput()
             if isinstance(option, str):
                 option = Text(option)
 
@@ -93,6 +97,24 @@ class ListEdit(Widget):
 
         self.select(len(self.options) - 1)
 
+    def add_option_below(self, move_cursor: bool = True):
+        self.options.insert(self.selected + 1, SimpleInput())
+        if move_cursor:
+            self.move_cursor_down()
+            self.focus_option()
+
+    def add_option_at_end(self, edit: bool = True):
+        self.options.insert(len(self.options), SimpleInput())
+        if edit:
+            self.move_cursor_to_bottom()
+            self.focus_option()
+
+    def add_option(self, index: int, edit: bool = True):
+        self.options.insert(index, SimpleInput())
+        if edit:
+            self.select(index)
+            self.focus_option()
+
     def focus_option(self):
         self.options[self.selected].on_focus()
         self.editing = True
@@ -101,37 +123,6 @@ class ListEdit(Widget):
     def unfocus_option(self):
         self.options[self.selected].on_blur()
         self.editing = False
-        self.refresh()
-
-    async def on_key(self, event: events.Key) -> None:
-        event.stop()
-
-        if self.editing:
-            if event.key == "escape":
-                self.unfocus_option()
-            else:
-                await self.options[self.selected].on_key(event)
-
-        else:
-            match event.key:
-                case "j" | "down":
-                    self.move_cursor_down()
-                case "k" | "up":
-                    self.move_cursor_up()
-                case "g" | "home":
-                    self.move_cursor_to_top()
-                case "G" | "end":
-                    self.move_cursor_to_bottom()
-                case "i":
-                    self.focus_option()
-                case "enter":
-                    await self.emit(
-                        ListItemSelected(
-                            self,
-                            self.options[self.selected].value,
-                        )
-                    )
-
         self.refresh()
 
     def render(self) -> RenderableType:
@@ -143,7 +134,7 @@ class ListEdit(Widget):
         for index, option in enumerate(self.options):
             # SAFETY: It will always return text type..
             # since the box is set to None
-            label = Text.from_markup(option.render())
+            label = option.render()
             label = Text(" ") + label
             label.pad_right(width)
 
