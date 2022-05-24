@@ -18,8 +18,8 @@ class List(Widget):
         self,
         name: str | None = None,
         options: list[TextType] = [],
-        other_option_style: StyleType = "",
-        highlighted_option_style: StyleType = "bold green",
+        style_unfocused: StyleType = "",
+        style_focused: StyleType = "bold green",
         pad: bool = True,
         rotate: bool = False,
         wrap: bool = True,
@@ -27,8 +27,8 @@ class List(Widget):
     ) -> None:
         super().__init__(name)
         self.options = options
-        self.other_option_style = other_option_style
-        self.highlighted_option_style = highlighted_option_style
+        self.style_unfocused = style_unfocused
+        self.style_focused = style_focused
         self.pad = pad
         self.panel = panel
         self.rotate = rotate
@@ -117,9 +117,9 @@ class List(Widget):
                 option.plain = option.plain[:width]
 
             if index != self.selected:
-                option.stylize(self.other_option_style)
+                option.stylize(self.style_unfocused)
             else:
-                option.stylize(self.highlighted_option_style)
+                option.stylize(self.style_focused)
 
             meta = {
                 "@click": f"click_label({index})",
