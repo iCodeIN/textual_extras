@@ -1,4 +1,4 @@
-from .text_input import TextInput
+from .text_input import TextInput, View
 from .multiline_text_input import MultiLineTextInput
 from .list import List
-from .list_edit import ListEdit
+from .single_level_tree_edit import SingleLevelTreeEdit
