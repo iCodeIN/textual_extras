@@ -1,5 +1,5 @@
 from typing import Literal
-from rich.box import SQUARE
+from rich.box import SQUARE, Box
 from rich.align import AlignMethod
 from rich.panel import Panel
 from rich.style import StyleType
@@ -50,6 +50,7 @@ class TextInput(Widget):
         title: TextType = "",
         title_align: AlignMethod = "center",
         border_style: StyleType = "blue",
+        box: Box | None = SQUARE,
         placeholder: TextType = Text("Placeholder ...", style="dim white"),
         password: bool = False,
         list: tuple[Literal["blacklist", "whitelist"], list[str]] = ("blacklist", []),
@@ -61,6 +62,7 @@ class TextInput(Widget):
         self.placeholder = placeholder
         self.password = password
         self.list = list
+        self.box = box
 
         self._cursor_position = len(self.value)
         self.width = self.size.width - 4
@@ -82,6 +84,11 @@ class TextInput(Widget):
         return text[self.view.start : self.view.end]
 
     def _set_view(self):
+        if self.box:
+            self.width = self.size.width - 4
+        else:
+            self.width = self.size.width
+
         self.width = self.size.width - 4
         self.view = View(0, self.width)
 
@@ -104,20 +111,23 @@ class TextInput(Widget):
         formatted_text = self._format_text(text)
         return self.render_panel(formatted_text)
 
-    def render_panel(self, text: TextType, height=1) -> RenderableType:
+    def render_panel(self, text: TextType) -> RenderableType:
         """
         Builds a panel for the Inpux Box
         """
 
-        return Panel(
-            text,
-            title=self.title,
-            title_align=self.title_align,
-            height=2 + height,
-            border_style=("bold " if self.has_focus else "dim ")
-            + str(self.border_style),
-            box=SQUARE,
-        )
+        if self.box:
+            return Panel(
+                text,
+                title=self.title,
+                title_align=self.title_align,
+                height=3,
+                border_style=("bold " if self.has_focus else "dim ")
+                + str(self.border_style),
+                box=self.box,
+            )
+        else:
+            return text
 
     def _render_text_with_cursor(self) -> str:
         """
@@ -137,10 +147,10 @@ class TextInput(Widget):
 
         return text
 
-    async def on_focus(self, _: events.Focus) -> None:
+    def on_focus(self, *_: events.Focus) -> None:
         self._has_focus = True
 
-    async def on_blur(self, _: events.Blur) -> None:
+    def on_blur(self, *_: events.Blur) -> None:
         self._has_focus = False
 
     def clear(self) -> None:
@@ -274,7 +284,7 @@ class TextInput(Widget):
             case "ctrl+left":
                 await self._move_cursor_backward(word=True)
 
-            case "ctrl+h":  # Backspace (No ctrl+backspace for ya T_T)
+            case "ctrl+h":  # Backspace
                 await self._move_cursor_backward(delete=True)
 
             case "ctrl+w":
