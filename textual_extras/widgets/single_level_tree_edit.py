@@ -47,6 +47,7 @@ class SingleLevelTreeEdit(Widget):
         self.selected = 0
         self.editing = False
         self.pre_setup_options(options)
+        self.select(0)
 
     def pre_setup_options(self, options: list[TextType]):
         self.options: list[SimpleInput] = []
@@ -62,6 +63,7 @@ class SingleLevelTreeEdit(Widget):
 
     def select(self, index: int) -> None:
         self.selected = index
+        self.current_opt = self.options[self.selected]
         self.refresh()
 
     def move_cursor_down(self) -> None:
@@ -116,12 +118,12 @@ class SingleLevelTreeEdit(Widget):
             self.focus_option()
 
     def focus_option(self):
-        self.options[self.selected].on_focus()
+        self.current_opt.on_focus()
         self.editing = True
         self.refresh()
 
     def unfocus_option(self):
-        self.options[self.selected].on_blur()
+        self.current_opt.on_blur()
         self.editing = False
         self.refresh()
 
@@ -132,8 +134,7 @@ class SingleLevelTreeEdit(Widget):
         width = self.size.width - 4
 
         for index, option in enumerate(self.options):
-            # SAFETY: It will always return text type..
-            # since the box is set to None
+
             label = option.render()
             label = Text(" ") + label
             label.pad_right(width)

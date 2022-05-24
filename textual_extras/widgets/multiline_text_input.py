@@ -1,3 +1,6 @@
+from rich.console import RenderableType
+from rich.text import Text
+from rich.tree import Tree
 from textual import events
 from rich.panel import Panel
 from .single_level_tree_edit import SingleLevelTreeEdit
@@ -9,6 +12,8 @@ class MultiLineTextInput(SingleLevelTreeEdit):
         name: str | None = None,
         panel: Panel = Panel(""),
     ) -> None:
+        self._cursor_column = 0
+
         super().__init__(
             name,
             options=[""],
@@ -20,14 +25,17 @@ class MultiLineTextInput(SingleLevelTreeEdit):
             wrap=False,
             panel=panel,
         )
-        self._cursor_column = 0
+
         self.editing = True
-        self.select(0)
 
     def select(self, index: int) -> None:
         self.options[self.selected].on_blur()
         self.options[index].on_focus()
-        return super().select(index)
+
+        option = self.options[index]
+        option._cursor_position = min(self._cursor_column, len(option.value))
+
+        super().select(index)
 
     async def on_key(self, event: events.Key) -> None:
         match event.key:
@@ -42,6 +50,20 @@ class MultiLineTextInput(SingleLevelTreeEdit):
             case "enter":
                 self.add_option_below()
             case _:
-                await self.options[self.selected].handle_keypress(event.key)
+                await self.current_opt.handle_keypress(event.key)
 
+        self._cursor_column = self.current_opt._cursor_position
         self.refresh()
+
+    def render(self) -> RenderableType:
+        tree = Tree("")
+        tree.hide_root = True
+        tree.expanded = True
+
+        for option in self.options:
+
+            label = option.render()
+            tree.add(label)
+
+        self.panel.renderable = tree
+        return self.panel
