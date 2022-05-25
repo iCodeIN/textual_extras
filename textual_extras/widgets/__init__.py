@@ -5,6 +5,7 @@ from .single_level_tree_edit import SingleLevelTreeEdit
 from .search_list import SearchList
 from .list_edit import ListEdit
 from .notification import Notification
+from .syntax_box import SyntaxBox
 
 __all__ = [
     "TextInput",
@@ -15,4 +16,5 @@ __all__ = [
     "SearchList",
     "ListEdit",
     "Notification",
+    "SyntaxBox"
 ]
