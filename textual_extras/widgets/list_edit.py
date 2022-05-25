@@ -5,7 +5,6 @@ from ..events import ListItemSelected
 
 
 class ListEdit(SingleLevelTreeEdit):
-
     async def on_key(self, event: events.Key) -> None:
         if self.editing:
             if event.key == "escape":
@@ -29,6 +28,8 @@ class ListEdit(SingleLevelTreeEdit):
                     self.add_option_below()
                 case "A":
                     self.add_option_at_end()
+                case "x":
+                    self.remove_option()
                 case "enter":
                     await self.emit(
                         ListItemSelected(

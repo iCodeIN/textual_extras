@@ -62,8 +62,10 @@ class SingleLevelTreeEdit(Widget):
             self.options.append(a)
 
     def select(self, index: int) -> None:
-        self.selected = index
-        self.current_opt = self.options[self.selected]
+        self.selected = max(-1, index)
+        if self.selected != -1:
+            self.current_opt = self.options[self.selected]
+
         self.refresh()
 
     def move_cursor_down(self) -> None:
@@ -98,6 +100,11 @@ class SingleLevelTreeEdit(Widget):
         """
 
         self.select(len(self.options) - 1)
+
+    def remove_option(self, index: int | None = None):
+        index = index or self.selected
+        self.options.pop(self.selected)
+        self.move_cursor_up()
 
     def add_option_below(self, move_cursor: bool = True):
         self.options.insert(self.selected + 1, SimpleInput())
