@@ -82,6 +82,9 @@ class SingleLevelTreeEdit(Widget):
         """
         Moves the highlight up
         """
+        if not self.options:
+            self.selected = -1
+            return
 
         if self.rotate:
             self.select((self.selected - 1 + len(self.options)) % len(self.options))
