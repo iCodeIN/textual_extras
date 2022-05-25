@@ -48,9 +48,15 @@ class MultiLineTextInput(SingleLevelTreeEdit):
             case "ctrl+end":
                 self.move_cursor_to_bottom()
             case "enter":
+                rest = self.current_opt.value[self._cursor_column:]
+                self.current_opt.value = self.current_opt.value[:self._cursor_column]
                 self.add_option_below()
+                self.current_opt.value += rest
             case _:
                 await self.current_opt.handle_keypress(event.key)
+                text = self.current_opt.value
+                if len(text) == self.size.width - 5:
+                    self.add_option_below()
 
         self._cursor_column = self.current_opt._cursor_position
         self.refresh()
