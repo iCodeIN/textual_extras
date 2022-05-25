@@ -1,5 +1,4 @@
 from rich.console import RenderableType
-from rich.text import Text
 from rich.tree import Tree
 from textual import events
 from rich.panel import Panel
@@ -48,8 +47,8 @@ class MultiLineTextInput(SingleLevelTreeEdit):
             case "ctrl+end":
                 self.move_cursor_to_bottom()
             case "enter":
-                rest = self.current_opt.value[self._cursor_column:]
-                self.current_opt.value = self.current_opt.value[:self._cursor_column]
+                rest = self.current_opt.value[self._cursor_column :]
+                self.current_opt.value = self.current_opt.value[: self._cursor_column]
                 self.add_option_below()
                 self.current_opt.value += rest
             case _:

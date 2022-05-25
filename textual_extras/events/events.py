@@ -1,6 +1,5 @@
 from rich.text import TextType
 from textual.events import Event
-from textual.widgets import NodeID
 
 
 class TextChanged(Event):
@@ -28,8 +27,6 @@ class ListItemSelected(Event):
     Emitted when a item is selected in the list
     """
 
-    def __init__(
-        self, sender, option: TextType
-    ) -> None:
+    def __init__(self, sender, option: TextType) -> None:
         super().__init__(sender)
         self.selected = option

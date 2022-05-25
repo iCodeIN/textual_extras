@@ -111,7 +111,7 @@ class List(Widget):
                 option = Text(option)
 
             option.pad_right(width - len(option) - 1)
-            option = Text(f" ") + option
+            option = Text(" ") + option
 
             if self.wrap:
                 option.plain = option.plain[:width]
