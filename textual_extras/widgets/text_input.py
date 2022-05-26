@@ -303,6 +303,10 @@ class TextInput(Widget):
             case "ctrl+delete":
                 await self._move_cursor_forward(word=True, delete=True)
 
+            case "ctrl+l":
+                while self.value:
+                    await self.handle_keypress("ctrl+h")
+
             # EXTRAS
             case "home":
                 self._cursor_position = 0
