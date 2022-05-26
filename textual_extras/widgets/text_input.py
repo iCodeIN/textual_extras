@@ -108,7 +108,7 @@ class TextInput(Widget):
             else:
                 text = self.value
 
-        formatted_text = self._format_text(text)
+        formatted_text = Text.from_markup(self._format_text(text))
         return self.render_panel(formatted_text)
 
     def render_panel(self, text: TextType) -> RenderableType:
@@ -305,6 +305,7 @@ class TextInput(Widget):
 
             case "ctrl+l":
                 while self.value:
+                    await self.handle_keypress("end")
                     await self.handle_keypress("ctrl+h")
 
             # EXTRAS
