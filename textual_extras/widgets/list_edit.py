@@ -10,7 +10,7 @@ class ListEdit(SingleLevelTreeEdit):
             if event.key == "escape":
                 self.unfocus_option()
             else:
-                await self.options[self.selected].handle_keypress(event.key)
+                await self.options[self.selected].on_key(event)
 
         else:
             match event.key:

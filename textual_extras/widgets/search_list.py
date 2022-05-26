@@ -61,8 +61,7 @@ class SearchList(SingleLevelTreeEdit):
             self.options = self.option_copy[:]
 
     async def clear_search_box(self):
-        while self.search_box.value:
-            await self.search_box.handle_keypress("ctrl+h")
+        await self.search_box.on_key(events.Key(self, "ctrl+l"))
 
         if self.option_copy:
             self.selected = 0
@@ -77,7 +76,7 @@ class SearchList(SingleLevelTreeEdit):
             if event.key == "escape":
                 self.stop_search()
             else:
-                await self.search_box.handle_keypress(event.key)
+                await self.search_box.on_key(event)
                 if self.search_box.value:
                     search = self.search_box.value
                     if [i for i in self.option_copy[:] if search in i.value]:
@@ -95,7 +94,7 @@ class SearchList(SingleLevelTreeEdit):
                     await self.clear_search_box()
                 case _:
                     if self.selected is not None:
-                        await self.options[self.selected].handle_keypress(event.key)
+                        await self.options[self.selected].on_key(event)
 
         else:
 

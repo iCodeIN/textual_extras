@@ -5,6 +5,8 @@ from rich.text import Text, TextType
 from rich.tree import Tree
 from textual.widget import Widget
 
+from textual_extras.widgets.text_input import View
+
 from . import TextInput
 
 
@@ -14,13 +16,6 @@ class SimpleInput(TextInput):
         name: str | None = None,
     ) -> None:
         super().__init__(name, placeholder="", box=None)
-
-    def _format_text(self, text: str) -> str:
-        # why? there is no width to determine the view
-        return text
-
-    def render_panel(self, text: TextType) -> RenderableType:
-        return text
 
 
 class SingleLevelTreeEdit(Widget):
@@ -44,22 +39,22 @@ class SingleLevelTreeEdit(Widget):
         self.panel = panel
         self.rotate = rotate
         self.wrap = wrap
-        self.selected = 0
         self.editing = False
-        self.pre_setup_options(options)
-        self.select(0)
+        self.options_temp = options
+        self.setup_done = False
+        self.select(-1)
 
-    def pre_setup_options(self, options: list[TextType]):
+    def get_box(self):
+        a = SimpleInput()
+        a.view = View(0, self.size.width - 5)
+        return a
+
+    def setup_preoptions(self):
         self.options: list[SimpleInput] = []
-        for option in options:
-            a = SimpleInput()
-            if isinstance(option, str):
-                option = Text(option)
-
-            a.value = option.plain
-            a._cursor_position = len(a.value)
-
-            self.options.append(a)
+        for option in self.options_temp:
+            self.add_option_below()
+            self.current_opt.value = str(option)
+            self.unfocus_option()
 
     def select(self, index: int) -> None:
         self.selected = max(-1, index)
@@ -110,19 +105,19 @@ class SingleLevelTreeEdit(Widget):
         self.move_cursor_up()
 
     def add_option_below(self, move_cursor: bool = True):
-        self.options.insert(self.selected + 1, SimpleInput())
+        self.options.insert(self.selected + 1, self.get_box())
         if move_cursor:
             self.move_cursor_down()
             self.focus_option()
 
     def add_option_at_end(self, edit: bool = True):
-        self.options.insert(len(self.options), SimpleInput())
+        self.options.insert(len(self.options), self.get_box())
         if edit:
             self.move_cursor_to_bottom()
             self.focus_option()
 
     def add_option(self, index: int, edit: bool = True):
-        self.options.insert(index, SimpleInput())
+        self.options.insert(index, self.get_box())
         if edit:
             self.select(index)
             self.focus_option()
@@ -138,6 +133,10 @@ class SingleLevelTreeEdit(Widget):
         self.refresh()
 
     def render(self) -> RenderableType:
+        if not self.setup_done:
+            self.setup_preoptions()
+            self.setup_done = True
+
         tree = Tree("")
         tree.hide_root = True
         tree.expanded = True
@@ -145,6 +144,7 @@ class SingleLevelTreeEdit(Widget):
 
         for index, option in enumerate(self.options):
 
+            label = Text(str(option.view))
             label = option.render()
             label = Text(" ") + label
             label.pad_right(width)

@@ -52,7 +52,7 @@ class MultiLineTextInput(SingleLevelTreeEdit):
                 self.add_option_below()
                 self.current_opt.value += rest
             case _:
-                await self.current_opt.handle_keypress(event.key)
+                await self.current_opt.on_key(event)
                 text = self.current_opt.value
                 if len(text) == self.size.width - 5:
                     self.add_option_below()
