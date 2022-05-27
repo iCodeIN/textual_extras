@@ -47,7 +47,6 @@ class NestedListEdit(TreeControl):
         self.refresh()
 
     def focus_node(self):
-        # self.nodes[self.highlighted].data.view = View(0, self.size.width - 5)
         self.nodes[self.highlighted].data.on_focus()
         self.editing = True
 
@@ -128,13 +127,16 @@ class NestedListEdit(TreeControl):
             await self.add_child()
         self.focus_node()
 
+    async def send_key_to_selected(self, event: events.Key):
+        await self.nodes[self.highlighted].data.on_key(event)
+
     async def on_key(self, event: events.Key):
         if self.editing:
             match event.key:
                 case "escape":
                     self.unfocus_node()
                 case _:
-                    await self.nodes[self.highlighted].data.on_key(event)
+                    await self.send_key_to_selected(event)
 
         else:
             match event.key:
