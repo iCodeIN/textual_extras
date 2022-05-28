@@ -17,7 +17,7 @@ class NestedListEdit(TreeControl):
     def __init__(
         self,
         label: TextType,
-        data: SimpleInput,
+        data: SimpleInput = SimpleInput(),
         name: str | None = None,
         padding: PaddingDimensions = (1, 1),
         style_unfocus: StyleType = "d white",
