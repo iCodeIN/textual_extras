@@ -5,7 +5,7 @@ from rich.text import Text, TextType
 from rich.tree import Tree
 from textual import events
 
-from textual_extras.events.events import ListItemSelected
+from ..events import ListItemSelected
 
 from .single_level_tree_edit import SingleLevelTreeEdit
 from .text_input import TextInput, View
@@ -144,6 +144,9 @@ class SearchList(SingleLevelTreeEdit):
         self.options = [i for i in self.option_copy[:] if search in i.value]
 
         for index, option in enumerate(self.options):
+
+            if not hasattr(option, "view"):
+                option.view = View(0, width - 1)
 
             label = option.render()
 
