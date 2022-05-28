@@ -52,6 +52,29 @@ class NestedListEdit(TreeControl):
         self.nodes[self.highlighted].data.on_blur()
         self.editing = False
 
+    async def remove_node(self, id: NodeID | None = None):
+
+        node = self.nodes[id or self.highlighted]
+
+        if node.expanded:
+            await node.toggle()
+
+        if node.next_node:
+            await self.cursor_down()
+        elif prev_node := node.previous_node:
+            if prev_node == self.root:
+                self.highlight(self.root.id)
+            else:
+                await self.cursor_up()
+
+        parent = node.parent or self.root
+        for index, child in enumerate(parent.children):
+            if child == node:
+                parent.children.pop(index)
+                parent.tree.children.pop(index)
+
+        self.refresh(layout=True)
+
     async def key_down(self, _: events.Key) -> None:
         pass
 
@@ -156,6 +179,8 @@ class NestedListEdit(TreeControl):
                     await self.add_sibling()
                 case "i":
                     self.focus_node()
+                case "x":
+                    await self.remove_node()
 
         self.refresh()
 
