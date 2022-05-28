@@ -10,8 +10,6 @@ from textual_extras.widgets.text_input import View
 
 from . import SimpleInput
 
-NodeDataType = SimpleInput
-
 
 class NestedListEdit(TreeControl):
     def __init__(
