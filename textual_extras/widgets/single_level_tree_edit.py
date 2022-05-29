@@ -36,14 +36,12 @@ class SingleLevelTreeEdit(Widget):
         pad: bool = True,
         rotate: bool = False,
         wrap: bool = True,
-        panel: Panel = Panel(""),
     ) -> None:
         super().__init__(name)
         self.style_unfocused = style_unfocused
         self.style_focused = style_focused
         self.style_editing = style_editing
         self.pad = pad
-        self.panel = panel
         self.rotate = rotate
         self.wrap = wrap
         self.editing = False
@@ -146,7 +144,29 @@ class SingleLevelTreeEdit(Widget):
         self.editing = False
         self.refresh()
 
-    def render(self) -> RenderableType:
+    def render(self):
+        return Panel(self.render_tree())
+
+    def render_custom_label(self, label: Text, is_highlighted: bool) -> Text:
+        width = self.size.width - 4
+
+        label = Text(" ") + label
+        label.pad_right(width)
+
+        if self.wrap:
+            label = label[: self.size.width - 4]
+
+        if is_highlighted == self.highlighted:
+            if self.editing:
+                label.stylize(self.style_editing)
+            else:
+                label.stylize(self.style_focused)
+        else:
+            label.stylize(self.style_unfocused)
+
+        return label
+
+    def render_tree(self) -> RenderableType:
 
         if not self.setup_done:
             self.setup_done = True
@@ -161,23 +181,12 @@ class SingleLevelTreeEdit(Widget):
             if not hasattr(option, "view"):
                 option.view = View(0, width - 1)
 
-            label = Text(str(option.view))
             label = option.render()
-            label = Text(" ") + label
-            label.pad_right(width)
-
-            if self.wrap:
-                label = label[: self.size.width - 4]
-
-            if index == self.highlighted:
-                if self.editing:
-                    label.stylize(self.style_editing)
-                else:
-                    label.stylize(self.style_focused)
-            else:
-                label.stylize(self.style_unfocused)
+            label = self.render_custom_label(
+                label,
+                index == self.highlighted,
+            )
 
             tree.add(label)
 
-        self.panel.renderable = tree
-        return self.panel
+        return tree

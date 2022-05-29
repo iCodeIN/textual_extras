@@ -33,7 +33,6 @@ class SearchList(SingleLevelTreeEdit):
             pad,
             rotate,
             wrap,
-            panel,
         )
 
         self.style_search_match = style_search_match
@@ -140,7 +139,7 @@ class SearchList(SingleLevelTreeEdit):
 
         self.refresh()
 
-    def render(self) -> RenderableType:
+    def render_tree(self) -> RenderableType:
         tree = Tree("")
         tree.hide_root = True
         tree.expanded = True
@@ -174,5 +173,4 @@ class SearchList(SingleLevelTreeEdit):
             label.highlight_regex(search, style=self.style_search_match)
             tree.add(label)
 
-        self.panel.renderable = tree
-        return self.panel
+        return tree

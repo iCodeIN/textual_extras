@@ -1,6 +1,5 @@
 from rich.console import RenderableType
 from rich.padding import PaddingDimensions
-from rich.panel import Panel
 from rich.style import StyleType
 from rich.text import Text, TextType
 from textual import events
@@ -20,7 +19,6 @@ class NestedListEdit(TreeControl):
         style_unfocus: StyleType = "d white",
         style_focus: StyleType = "b blue",
         style_editing: StyleType = "b cyan",
-        panel: Panel = Panel(""),
     ) -> None:
         self.nodes: dict[NodeID, TreeNode[SimpleInput]] = {}
 
@@ -30,13 +28,8 @@ class NestedListEdit(TreeControl):
         self.style_focus = style_focus
         self.style_unfocus = style_unfocus
         self.style_editing = style_editing
-        self.panel = panel
         self.editing = False
         self.highlight(self.root.id)
-
-    def render(self) -> RenderableType:
-        self.panel.renderable = self._tree
-        return self.panel
 
     def highlight(self, id: NodeID) -> None:
         self.highlighted = id
