@@ -21,7 +21,7 @@ class ListEdit(SingleLevelTreeEdit):
                 case "j" | "down":
                     self.cursor_down()
                 case "k" | "up":
-                    self.move_cursor_up()
+                    self.cursor_up()
                 case "g" | "home":
                     self.move_to_top()
                 case "G" | "end":

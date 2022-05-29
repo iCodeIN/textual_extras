@@ -83,7 +83,7 @@ class SingleLevelTreeEdit(Widget):
         else:
             self.highlight(min(self.highlighted + 1, len(self.options) - 1))
 
-    def move_cursor_up(self):
+    def cursor_up(self):
         """
         Moves the highlight up
         """
@@ -114,7 +114,7 @@ class SingleLevelTreeEdit(Widget):
     def remove_option(self, index: int | None = None) -> None:
         index = index or self.highlighted
         self.options.pop(self.highlighted)
-        self.move_cursor_up()
+        self.cursor_up()
 
     def add_option_below(self, move_cursor: bool = True) -> None:
         self.options.insert(self.highlighted + 1, SimpleInput())

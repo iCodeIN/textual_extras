@@ -39,7 +39,7 @@ class MultiLineTextInput(SingleLevelTreeEdit):
     async def on_key(self, event: events.Key) -> None:
         match event.key:
             case "up":
-                self.move_cursor_up()
+                self.cursor_up()
             case "down":
                 self.cursor_down()
             case "ctrl+home":
