@@ -20,8 +20,6 @@ class NestedListEdit(TreeControl):
         style_focus: StyleType = "b blue",
         style_editing: StyleType = "b cyan",
     ) -> None:
-        self.nodes: dict[NodeID, TreeNode[SimpleInput]] = {}
-
         super().__init__(label, data, name=name, padding=padding)
         self._tree.hide_root = True
         self._tree.expanded = True
