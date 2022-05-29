@@ -50,9 +50,9 @@ class SingleLevelTreeEdit(Widget):
         self.options_temp = options
         self.setup_done = False
         self.highlight(-1)
-        self.setup_preoptions()
+        self._setup_preoptions()
 
-    def setup_preoptions(self) -> None:
+    def _setup_preoptions(self) -> None:
         """
         Pre - setup the already provided options
         """
@@ -60,6 +60,7 @@ class SingleLevelTreeEdit(Widget):
         self.options: list[SimpleInput] = []
         for option in self.options_temp:
             self.add_option_below()
+            # SAFETY: current opt will always be there becuse of the above line
             self.current_opt.value = str(option)
             self.unfocus_option()
 
@@ -67,10 +68,12 @@ class SingleLevelTreeEdit(Widget):
         self.highlighted = max(-1, index)
         if self.highlighted != -1:
             self.current_opt = self.options[self.highlighted]
+        else:
+            self.current_opt = None
 
         self.refresh()
 
-    def move_cursor_down(self) -> None:
+    def cursor_down(self) -> None:
         """
         Moves the highlight down
         """
@@ -95,13 +98,13 @@ class SingleLevelTreeEdit(Widget):
         else:
             self.highlight(max(self.highlighted - 1, 0))
 
-    def move_cursor_to_top(self) -> None:
+    def move_to_top(self) -> None:
         """
         Moves the cursor to the top
         """
         self.highlight(0)
 
-    def move_cursor_to_bottom(self) -> None:
+    def move_to_bottom(self) -> None:
         """
         Moves the cursor to the bottom
         """
@@ -116,13 +119,13 @@ class SingleLevelTreeEdit(Widget):
     def add_option_below(self, move_cursor: bool = True) -> None:
         self.options.insert(self.highlighted + 1, SimpleInput())
         if move_cursor:
-            self.move_cursor_down()
+            self.cursor_down()
             self.focus_option()
 
     def add_option_at_end(self, edit: bool = True) -> None:
         self.options.insert(len(self.options), SimpleInput())
         if edit:
-            self.move_cursor_to_bottom()
+            self.move_to_bottom()
             self.focus_option()
 
     def add_option(self, index: int, edit: bool = True) -> None:
@@ -132,12 +135,14 @@ class SingleLevelTreeEdit(Widget):
             self.focus_option()
 
     def focus_option(self) -> None:
-        self.current_opt.on_focus()
+        if self.current_opt:
+            self.current_opt.on_focus()
         self.editing = True
         self.refresh()
 
     def unfocus_option(self) -> None:
-        self.current_opt.on_blur()
+        if self.current_opt:
+            self.current_opt.on_blur()
         self.editing = False
         self.refresh()
 

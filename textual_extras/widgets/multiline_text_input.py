@@ -41,23 +41,29 @@ class MultiLineTextInput(SingleLevelTreeEdit):
             case "up":
                 self.move_cursor_up()
             case "down":
-                self.move_cursor_down()
+                self.cursor_down()
             case "ctrl+home":
-                self.move_cursor_to_top()
+                self.move_to_top()
             case "ctrl+end":
-                self.move_cursor_to_bottom()
+                self.move_to_bottom()
             case "enter":
-                rest = self.current_opt.value[self._cursor_column :]
-                self.current_opt.value = self.current_opt.value[: self._cursor_column]
-                self.add_option_below()
-                self.current_opt.value += rest
-            case _:
-                await self.current_opt.on_key(event)
-                text = self.current_opt.value
-                if len(text) == self.size.width - 5:
+                if self.current_opt:
+                    rest = self.current_opt.value[self._cursor_column :]
+                    self.current_opt.value = self.current_opt.value[
+                        : self._cursor_column
+                    ]
                     self.add_option_below()
+                    self.current_opt.value += rest
+            case _:
+                if self.current_opt:
+                    await self.current_opt.on_key(event)
+                    text = self.current_opt.value
+                    if len(text) == self.size.width - 5:
+                        self.add_option_below()
 
-        self._cursor_column = self.current_opt._cursor_position
+        if self.current_opt:
+            self._cursor_column = self.current_opt._cursor_position
+
         self.refresh()
 
     def render(self) -> RenderableType:

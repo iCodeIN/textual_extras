@@ -71,9 +71,9 @@ class SearchList(SingleLevelTreeEdit):
         await self.search_box.on_key(events.Key(self, "ctrl+l"))
 
         if self.option_copy:
-            self.selected = 0
+            self.highlighted = 0
         else:
-            self.selected = None
+            self.highlighted = None
 
         self.options = self.option_copy[:]
 
@@ -87,9 +87,9 @@ class SearchList(SingleLevelTreeEdit):
                 if self.search_box.value:
                     search = self.search_box.value
                     if [i for i in self.option_copy[:] if search in i.value]:
-                        self.selected = 0
+                        self.highlighted = 0
                     else:
-                        self.selected = None
+                        self.highlighted = None
                 else:
                     await self.clear_search_box()
 
@@ -100,8 +100,8 @@ class SearchList(SingleLevelTreeEdit):
                 case "ctrl+l":
                     await self.clear_search_box()
                 case _:
-                    if self.selected is not None:
-                        await self.options[self.selected].on_key(event)
+                    if self.highlighted is not None:
+                        await self.options[self.highlighted].on_key(event)
 
         else:
 
@@ -111,18 +111,18 @@ class SearchList(SingleLevelTreeEdit):
                 case "ctrl+l":
                     await self.clear_search_box()
                 case _:
-                    if self.selected is None:
+                    if self.highlighted is None:
                         return
 
                     match event.key:
                         case "j" | "down":
-                            self.move_cursor_down()
+                            self.cursor_down()
                         case "k" | "up":
                             self.move_cursor_up()
                         case "g" | "home":
-                            self.move_cursor_to_top()
+                            self.move_to_top()
                         case "G" | "end":
-                            self.move_cursor_to_bottom()
+                            self.move_to_bottom()
                         case "i":
                             self.focus_option()
                         case "a":
@@ -130,11 +130,11 @@ class SearchList(SingleLevelTreeEdit):
                         case "A":
                             self.add_option_at_end()
                         case "enter":
-                            if self.selected is not None:
+                            if self.highlighted is not None:
                                 await self.emit(
                                     ListItemSelected(
                                         self,
-                                        self.options[self.selected].value,
+                                        self.options[self.highlighted].value,
                                     )
                                 )
 
@@ -163,7 +163,7 @@ class SearchList(SingleLevelTreeEdit):
             if self.wrap:
                 label = label[: self.size.width - 4]
 
-            if index == self.selected:
+            if index == self.highlighted:
                 if self.editing:
                     label.stylize(self.style_editing)
                 else:

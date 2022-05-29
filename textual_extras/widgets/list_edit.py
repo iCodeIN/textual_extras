@@ -19,13 +19,13 @@ class ListEdit(SingleLevelTreeEdit):
         else:
             match event.key:
                 case "j" | "down":
-                    self.move_cursor_down()
+                    self.cursor_down()
                 case "k" | "up":
                     self.move_cursor_up()
                 case "g" | "home":
-                    self.move_cursor_to_top()
+                    self.move_to_top()
                 case "G" | "end":
-                    self.move_cursor_to_bottom()
+                    self.move_to_bottom()
                 case "i":
                     self.focus_option()
                 case "a":
