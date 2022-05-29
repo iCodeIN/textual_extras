@@ -283,6 +283,11 @@ class TextInput(Widget):
         elif prev <= self.view.end and curr >= self.view.end:
             self.view.shift_right(curr - prev, len(self.value) + 1)
 
+    async def clear_input(self):
+        await self.handle_keypress("end")
+        while self.value:
+            await self.handle_keypress("ctrl+h")
+
     async def handle_keypress(self, key: str) -> None:
         """
         Handles Keypresses
@@ -316,9 +321,7 @@ class TextInput(Widget):
                 await self._move_cursor_forward(word=True, delete=True)
 
             case "ctrl+l":
-                while self.value:
-                    await self.handle_keypress("end")
-                    await self.handle_keypress("ctrl+h")
+                await self.clear_input()
 
             # EXTRAS
             case "home":
