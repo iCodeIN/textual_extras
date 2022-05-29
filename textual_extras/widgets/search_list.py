@@ -1,5 +1,4 @@
 from rich.console import RenderableType
-from rich.panel import Panel
 from rich.style import StyleType
 from rich.text import Text, TextType
 from rich.tree import Tree
@@ -22,7 +21,6 @@ class SearchList(SingleLevelTreeEdit):
         pad: bool = True,
         rotate: bool = False,
         wrap: bool = True,
-        panel: Panel = Panel(""),
     ) -> None:
         super().__init__(
             name,
@@ -53,7 +51,8 @@ class SearchList(SingleLevelTreeEdit):
 
         self.search_mode = True
         self.search_box.on_focus()
-        self.option_copy = self.options[:]
+        if not self.search_box.value:
+            self.option_copy = self.options[:]
 
     def stop_search(self) -> None:
         """
@@ -63,8 +62,7 @@ class SearchList(SingleLevelTreeEdit):
         self.search_mode = False
         self.search_box.on_blur()
 
-        if not self.search_box.value:
-            self.options = self.option_copy[:]
+        self.options = self.option_copy.copy()
 
     async def clear_search_box(self) -> None:
         await self.search_box.on_key(events.Key(self, "ctrl+l"))
@@ -74,7 +72,7 @@ class SearchList(SingleLevelTreeEdit):
         else:
             self.highlighted = None
 
-        self.options = self.option_copy[:]
+        self.options = self.option_copy.copy()
 
     async def on_key(self, event: events.Key) -> None:
 
