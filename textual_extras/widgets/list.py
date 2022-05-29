@@ -11,7 +11,7 @@ from ..events import ListItemSelected
 
 class List(Widget):
     """
-    A simple list class to show the items in a list
+    A list class to show and select the items in a list
     """
 
     def __init__(
@@ -33,10 +33,10 @@ class List(Widget):
         self.panel = panel
         self.rotate = rotate
         self.wrap = wrap
-        self.selected = 0
+        self.highlighted = 0
 
-    def select(self, id: int) -> None:
-        self.selected = id
+    def highlight(self, id: int) -> None:
+        self.highlighted = id
         self.refresh(layout=True)
 
     def move_cursor_down(self) -> None:
@@ -45,9 +45,9 @@ class List(Widget):
         """
 
         if self.rotate:
-            self.select((self.selected + 1) % len(self.options))
+            self.highlight((self.highlighted + 1) % len(self.options))
         else:
-            self.select(min(self.selected + 1, len(self.options) - 1))
+            self.highlight(min(self.highlighted + 1, len(self.options) - 1))
 
     def move_cursor_up(self):
         """
@@ -55,22 +55,24 @@ class List(Widget):
         """
 
         if self.rotate:
-            self.select((self.selected - 1 + len(self.options)) % len(self.options))
+            self.highlight(
+                (self.highlighted - 1 + len(self.options)) % len(self.options)
+            )
         else:
-            self.select(max(self.selected - 1, 0))
+            self.highlight(max(self.highlighted - 1, 0))
 
     def move_cursor_to_top(self) -> None:
         """
         Moves the cursor to the top
         """
-        self.select(0)
+        self.highlight(0)
 
     def move_cursor_to_bottom(self) -> None:
         """
         Moves the cursor to the bottom
         """
 
-        self.select(len(self.options) - 1)
+        self.highlight(len(self.options) - 1)
 
     async def on_key(self, event: events.Key) -> None:
         event.stop()
@@ -85,13 +87,13 @@ class List(Widget):
             case "G" | "end":
                 self.move_cursor_to_bottom()
             case "enter":
-                await self.emit(ListItemSelected(self, self.options[self.selected]))
+                await self.emit(ListItemSelected(self, self.options[self.highlighted]))
 
     async def on_mouse_move(self, event: events.MouseMove) -> None:
         """
         Move the highlight along with mouse hover
         """
-        self.select(event.style.meta.get("selected"))
+        self.highlight(event.style.meta.get("selected"))
 
     def add_option(self, option: TextType) -> None:
         self.options.append(option)
@@ -116,7 +118,7 @@ class List(Widget):
             if self.wrap:
                 option.plain = option.plain[:width]
 
-            if index != self.selected:
+            if index != self.highlighted:
                 option.stylize(self.style_unfocused)
             else:
                 option.stylize(self.style_focused)
@@ -132,5 +134,5 @@ class List(Widget):
         return self.panel
 
     async def action_click_label(self, id):
-        self.select(id)
-        await self.emit(ListItemSelected(self, self.options[self.selected]))
+        self.highlight(id)
+        await self.emit(ListItemSelected(self, self.options[self.highlighted]))

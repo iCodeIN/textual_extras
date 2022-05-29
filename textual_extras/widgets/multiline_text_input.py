@@ -27,14 +27,14 @@ class MultiLineTextInput(SingleLevelTreeEdit):
 
         self.editing = True
 
-    def select(self, index: int) -> None:
-        self.options[self.selected].on_blur()
+    def highlight(self, index: int) -> None:
+        self.options[self.highlighted].on_blur()
         self.options[index].on_focus()
 
         option = self.options[index]
         option._cursor_position = min(self._cursor_column, len(option.value))
 
-        super().select(index)
+        super().highlight(index)
 
     async def on_key(self, event: events.Key) -> None:
         match event.key:

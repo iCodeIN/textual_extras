@@ -4,13 +4,16 @@ from rich.style import StyleType
 from rich.text import Text, TextType
 from rich.tree import Tree
 from textual.widget import Widget
-
 from textual_extras.widgets.text_input import View
 
 from . import TextInput
 
 
 class SimpleInput(TextInput):
+    """
+    A simple text Input with no panel
+    """
+
     def __init__(
         self,
         name: str | None = None,
@@ -19,6 +22,10 @@ class SimpleInput(TextInput):
 
 
 class SingleLevelTreeEdit(Widget):
+    """
+    An editable tree structure with no nests
+    """
+
     def __init__(
         self,
         name: str | None = None,
@@ -42,24 +49,24 @@ class SingleLevelTreeEdit(Widget):
         self.editing = False
         self.options_temp = options
         self.setup_done = False
-        self.select(-1)
+        self.highlight(-1)
+        self.setup_preoptions()
 
-    def get_box(self):
-        a = SimpleInput()
-        a.view = View(0, self.size.width - 5)
-        return a
+    def setup_preoptions(self) -> None:
+        """
+        Pre - setup the already provided options
+        """
 
-    def setup_preoptions(self):
         self.options: list[SimpleInput] = []
         for option in self.options_temp:
             self.add_option_below()
             self.current_opt.value = str(option)
             self.unfocus_option()
 
-    def select(self, index: int) -> None:
-        self.selected = max(-1, index)
-        if self.selected != -1:
-            self.current_opt = self.options[self.selected]
+    def highlight(self, index: int) -> None:
+        self.highlighted = max(-1, index)
+        if self.highlighted != -1:
+            self.current_opt = self.options[self.highlighted]
 
         self.refresh()
 
@@ -69,72 +76,74 @@ class SingleLevelTreeEdit(Widget):
         """
 
         if self.rotate:
-            self.select((self.selected + 1) % len(self.options))
+            self.highlight((self.highlighted + 1) % len(self.options))
         else:
-            self.select(min(self.selected + 1, len(self.options) - 1))
+            self.highlight(min(self.highlighted + 1, len(self.options) - 1))
 
     def move_cursor_up(self):
         """
         Moves the highlight up
         """
         if not self.options:
-            self.selected = -1
+            self.highlighted = -1
             return
 
         if self.rotate:
-            self.select((self.selected - 1 + len(self.options)) % len(self.options))
+            self.highlight(
+                (self.highlighted - 1 + len(self.options)) % len(self.options)
+            )
         else:
-            self.select(max(self.selected - 1, 0))
+            self.highlight(max(self.highlighted - 1, 0))
 
     def move_cursor_to_top(self) -> None:
         """
         Moves the cursor to the top
         """
-        self.select(0)
+        self.highlight(0)
 
     def move_cursor_to_bottom(self) -> None:
         """
         Moves the cursor to the bottom
         """
 
-        self.select(len(self.options) - 1)
+        self.highlight(len(self.options) - 1)
 
-    def remove_option(self, index: int | None = None):
-        index = index or self.selected
-        self.options.pop(self.selected)
+    def remove_option(self, index: int | None = None) -> None:
+        index = index or self.highlighted
+        self.options.pop(self.highlighted)
         self.move_cursor_up()
 
-    def add_option_below(self, move_cursor: bool = True):
-        self.options.insert(self.selected + 1, self.get_box())
+    def add_option_below(self, move_cursor: bool = True) -> None:
+        self.options.insert(self.highlighted + 1, SimpleInput())
         if move_cursor:
             self.move_cursor_down()
             self.focus_option()
 
-    def add_option_at_end(self, edit: bool = True):
-        self.options.insert(len(self.options), self.get_box())
+    def add_option_at_end(self, edit: bool = True) -> None:
+        self.options.insert(len(self.options), SimpleInput())
         if edit:
             self.move_cursor_to_bottom()
             self.focus_option()
 
-    def add_option(self, index: int, edit: bool = True):
-        self.options.insert(index, self.get_box())
+    def add_option(self, index: int, edit: bool = True) -> None:
+        self.options.insert(index, SimpleInput())
         if edit:
-            self.select(index)
+            self.highlight(index)
             self.focus_option()
 
-    def focus_option(self):
+    def focus_option(self) -> None:
         self.current_opt.on_focus()
         self.editing = True
         self.refresh()
 
-    def unfocus_option(self):
+    def unfocus_option(self) -> None:
         self.current_opt.on_blur()
         self.editing = False
         self.refresh()
 
     def render(self) -> RenderableType:
+
         if not self.setup_done:
-            self.setup_preoptions()
             self.setup_done = True
 
         tree = Tree("")
@@ -144,6 +153,9 @@ class SingleLevelTreeEdit(Widget):
 
         for index, option in enumerate(self.options):
 
+            if not hasattr(option, "view"):
+                option.view = View(0, width - 1)
+
             label = Text(str(option.view))
             label = option.render()
             label = Text(" ") + label
@@ -152,7 +164,7 @@ class SingleLevelTreeEdit(Widget):
             if self.wrap:
                 label = label[: self.size.width - 4]
 
-            if index == self.selected:
+            if index == self.highlighted:
                 if self.editing:
                     label.stylize(self.style_editing)
                 else:

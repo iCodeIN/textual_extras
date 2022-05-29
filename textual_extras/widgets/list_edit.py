@@ -5,12 +5,16 @@ from ..events import ListItemSelected
 
 
 class ListEdit(SingleLevelTreeEdit):
+    """
+    A class to produce a list that can be edited
+    """
+
     async def on_key(self, event: events.Key) -> None:
         if self.editing:
             if event.key == "escape":
                 self.unfocus_option()
             else:
-                await self.options[self.selected].on_key(event)
+                await self.options[self.highlighted].on_key(event)
 
         else:
             match event.key:
@@ -34,7 +38,7 @@ class ListEdit(SingleLevelTreeEdit):
                     await self.emit(
                         ListItemSelected(
                             self,
-                            self.options[self.selected].value,
+                            self.options[self.highlighted].value,
                         )
                     )
 

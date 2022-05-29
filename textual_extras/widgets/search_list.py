@@ -6,7 +6,6 @@ from rich.tree import Tree
 from textual import events
 
 from ..events import ListItemSelected
-
 from .single_level_tree_edit import SingleLevelTreeEdit
 from .text_input import TextInput, View
 
@@ -48,19 +47,27 @@ class SearchList(SingleLevelTreeEdit):
         self.search_box.view = View(0, 100)
         self.search_mode = False
 
-    def start_search(self):
+    def start_search(self) -> None:
+        """
+        Turns on search mode
+        """
+
         self.search_mode = True
         self.search_box.on_focus()
         self.option_copy = self.options[:]
 
-    def stop_search(self):
+    def stop_search(self) -> None:
+        """
+        Turns off search mode
+        """
+
         self.search_mode = False
         self.search_box.on_blur()
 
         if not self.search_box.value:
             self.options = self.option_copy[:]
 
-    async def clear_search_box(self):
+    async def clear_search_box(self) -> None:
         await self.search_box.on_key(events.Key(self, "ctrl+l"))
 
         if self.option_copy:

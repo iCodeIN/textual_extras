@@ -1,36 +1,48 @@
+import pyperclip
 from typing import Literal
+
 from rich.box import SQUARE, Box
 from rich.align import AlignMethod
 from rich.panel import Panel
 from rich.style import StyleType
 from rich.text import Text, TextType
+from rich.console import RenderableType
 
 from textual import events
 from textual.reactive import Reactive
 from textual.widget import Widget
-from rich.console import RenderableType
-
-import pyperclip
 
 from ..events import TextChanged, PyperclipError, InvalidInputAttempt
 
 
 class View:
+    """
+    A class to manage current viewing portion of text input
+    """
+
     def __init__(self, start: int = 0, end: int = 0) -> None:
         self.start = start
         self.end = end
 
-    def shift_left(self, delta: int):
+    def shift_left(self, delta: int) -> None:
+        """
+        Shift the view to the left by provided delta
+        """
+
         delta = min(delta, self.start)
         self.start -= delta
         self.end -= delta
 
-    def shift_right(self, delta: int, max_val: int):
+    def shift_right(self, delta: int, max_val: int) -> None:
+        """
+        Shift the view to the left by provided delta
+        """
+
         delta = min(delta, max_val - self.end)
         self.start += delta
         self.end += delta
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"View({self.start}, {self.end})"
 
 

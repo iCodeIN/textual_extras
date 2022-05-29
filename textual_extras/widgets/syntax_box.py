@@ -7,6 +7,10 @@ from . import MultiLineTextInput
 
 
 class SyntaxBox(MultiLineTextInput):
+    """
+    Multiline Input but with syntax support
+    """
+
     def __init__(
         self,
         syntax: str,

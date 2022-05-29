@@ -7,6 +7,10 @@ from textual.widget import Widget
 
 
 class Notification(Widget):
+    """
+    A simple notification widget
+    """
+
     def __init__(
         self,
         name: str | None = None,
@@ -23,7 +27,7 @@ class Notification(Widget):
         self.bar_style = bar_style
         self.panel = panel
 
-    def _calculate_lines(self):
+    def _calculate_lines(self) -> int:
         width = self.size.width - 4
         lines = 1
         c = 0
@@ -37,7 +41,7 @@ class Notification(Widget):
 
         return lines
 
-    async def popup(self):
+    async def popup(self) -> None:
         if not self.started:
             self.subtitle_length = self.size.width - 2
             self.started = True
@@ -45,7 +49,7 @@ class Notification(Widget):
             tick_rate = self.timeout / (self.subtitle_length)
             self.timer = self.set_interval(tick_rate, self.tick)
 
-    def tick(self):
+    def tick(self) -> None:
         if self.subtitle_length:
             self.subtitle_length -= 1
         else:
