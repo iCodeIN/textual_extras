@@ -146,6 +146,9 @@ class NestedListEdit(TreeControl):
             match event.key:
                 case "escape":
                     self.unfocus_node()
+                case _:
+                    await self.send_key_to_selected(event)
+
         else:
             match event.key:
                 case "j" | "down":
